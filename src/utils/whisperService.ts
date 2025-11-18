@@ -1,17 +1,22 @@
 /**
- * Azure OpenAI Whisper Speech-to-Text Service
- * Handles audio recording and transcription using Azure OpenAI Whisper API
+ * Whisper Speech-to-Text Service
+ * Handles audio recording and transcription via backend API
  */
 
 export interface WhisperConfig {
-  apiKey: string;
-  endpoint: string;
+  backendUrl: string;
 }
 
 export interface TranscriptionResult {
   text: string;
   success: boolean;
   error?: string;
+}
+
+export interface TranscriptionOptions {
+  language?: string;
+  prompt?: string;
+  temperature?: number;
 }
 
 export class WhisperService {
@@ -93,11 +98,14 @@ export class WhisperService {
   }
 
   /**
-   * Transcribe audio using Azure OpenAI Whisper API
+   * Transcribe audio using backend API
    */
-  async transcribe(audioBlob: Blob): Promise<TranscriptionResult> {
+  async transcribe(
+    audioBlob: Blob,
+    options?: TranscriptionOptions
+  ): Promise<TranscriptionResult> {
     try {
-      // Convert blob to the format Whisper expects
+      // Convert blob to the format the backend expects
       const formData = new FormData();
 
       // Convert to appropriate format if needed
@@ -105,21 +113,29 @@ export class WhisperService {
         type: audioBlob.type,
       });
 
-      formData.append("file", audioFile);
+      formData.append("audio", audioFile);
 
-      const response = await fetch(this.config.endpoint, {
+      // Add optional parameters
+      if (options?.language) {
+        formData.append("language", options.language);
+      }
+      if (options?.prompt) {
+        formData.append("prompt", options.prompt);
+      }
+      if (options?.temperature !== undefined) {
+        formData.append("temperature", options.temperature.toString());
+      }
+
+      const response = await fetch(`${this.config.backendUrl}/api/audio/transcribe`, {
         method: "POST",
-        headers: {
-          "api-key": this.config.apiKey,
-        },
         body: formData,
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Whisper API error:", errorText);
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Backend API error:", errorData);
         throw new Error(
-          `Transcription failed: ${response.status} ${response.statusText}`
+          errorData.error || `Transcription failed: ${response.status} ${response.statusText}`
         );
       }
 
@@ -127,7 +143,7 @@ export class WhisperService {
 
       return {
         text: result.text || "",
-        success: true,
+        success: result.success || true,
       };
     } catch (error) {
       console.error("Transcription error:", error);
@@ -135,6 +151,59 @@ export class WhisperService {
         text: "",
         success: false,
         error: error instanceof Error ? error.message : "Transcription failed",
+      };
+    }
+  }
+
+  /**
+   * Translate audio to English using backend API
+   */
+  async translate(
+    audioBlob: Blob,
+    options?: Omit<TranscriptionOptions, 'language'>
+  ): Promise<TranscriptionResult> {
+    try {
+      const formData = new FormData();
+
+      const audioFile = new File([audioBlob], "audio.webm", {
+        type: audioBlob.type,
+      });
+
+      formData.append("audio", audioFile);
+
+      // Add optional parameters
+      if (options?.prompt) {
+        formData.append("prompt", options.prompt);
+      }
+      if (options?.temperature !== undefined) {
+        formData.append("temperature", options.temperature.toString());
+      }
+
+      const response = await fetch(`${this.config.backendUrl}/api/audio/translate`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Backend API error:", errorData);
+        throw new Error(
+          errorData.error || `Translation failed: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+
+      return {
+        text: result.text || "",
+        success: result.success || true,
+      };
+    } catch (error) {
+      console.error("Translation error:", error);
+      return {
+        text: "",
+        success: false,
+        error: error instanceof Error ? error.message : "Translation failed",
       };
     }
   }
@@ -200,12 +269,9 @@ export class WhisperService {
  */
 export function createWhisperService(): WhisperService {
   const config: WhisperConfig = {
-    apiKey:
-      import.meta.env.VITE_WHISPER_API_KEY ||
-      "2bcd1b58e76740bcb4edeeced69087cd",
-    endpoint:
-      import.meta.env.VITE_WHISPER_ENDPOINT ||
-      "https://swa-it-openai-idit.openai.azure.com/openai/deployments/whisper/audio/translations?api-version=2024-06-01",
+    backendUrl:
+      import.meta.env.VITE_BACKEND_URL ||
+      "http://localhost:3002", // Default backend URL
   };
 
   return new WhisperService(config);
