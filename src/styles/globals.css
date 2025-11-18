@@ -1,0 +1,689 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  
+  /* Typography Variables - Figma-like clean hierarchy */
+  --text-h1: 18px;
+  --text-h2: 14px;
+  --text-h3: 13px;
+  --text-h4: 12px;
+  --text-base: 11px;
+  --text-label: 11px;
+  
+  /* Responsive Typography Variables for Mobile */
+  --text-h1-mobile: 16px;
+  --text-h2-mobile: 14px;
+  --text-h3-mobile: 13px;
+  --text-h4-mobile: 12px;
+  --text-base-mobile: 11px;
+  --text-label-mobile: 10px;
+  
+  /* Clean Figma-inspired color palette */
+  /* The default background color for the application. */
+  --background: rgba(255, 255, 255, 1);
+  /* The default color for elements or text that appears on top of the background. */
+  --foreground: rgba(0, 0, 0, 1);
+  /* The background color for cards, modals, and other containers. */
+  --card: rgba(255, 255, 255, 1);
+  /* The default color for text or elements that appear on top of cards, modals and other background containers. */
+  --card-foreground: rgba(0, 0, 0, 1);
+  /* The background color for dropdowns and tooltips. */
+  --popover: rgba(255, 255, 255, 1);
+  /* The default color for text or elements that appear on top of dropdowns and tooltips. */
+  --popover-foreground: rgba(0, 0, 0, 1);
+  /* The primary color used for buttons, links, and other interactive elements. */
+  --primary: rgba(24, 24, 27, 1);
+  /* The default color for text or elements that appear on top of primary colored elements. */
+  --primary-foreground: rgba(255, 255, 255, 1);
+  /* The secondary color used for secondary(but NOT-DESTRUCTIVE) buttons and interactive elements. */
+  --secondary: rgba(244, 244, 245, 1);
+  /* The default color for text or elements that appear on top of secondary colored elements. */
+  --secondary-foreground: rgba(24, 24, 27, 1);
+  /* The muted color used for less prominent elements, such as disabled buttons or disabled text. */
+  --muted: rgba(250, 250, 250, 1);
+  /* The default color for text or elements that appear on top of muted colored elements. */
+  --muted-foreground: rgba(113, 113, 122, 1);
+  /* The accent color used for highlights, links, and other interactive elements. */
+  --accent: rgba(24, 24, 27, 1);
+  /* The default color for text or elements that appear on top of accent colored elements. */
+  --accent-foreground: rgba(255, 255, 255, 1);
+  /* The color used for background in destructive actions, such as delete buttons or error messages. */
+  --destructive: rgba(239, 68, 68, 1);
+  /* The default color for text or elements that appear on top of destructive colored elements. */
+  --destructive-foreground: rgba(255, 255, 255, 1);
+  /* Success color for positive actions and states */
+  --success: rgba(34, 197, 94, 1);
+  /* The default color for text or elements that appear on top of success colored elements. */
+  --success-foreground: rgba(255, 255, 255, 1);
+  /* Warning color for caution states */
+  --warning: rgba(251, 146, 60, 1);
+  /* The default color for text or elements that appear on top of warning colored elements. */
+  --warning-foreground: rgba(255, 255, 255, 1);
+  /* Purple accent for variety */
+  --purple: rgba(139, 92, 246, 1);
+  /* The default color for text or elements that appear on top of purple colored elements. */
+  --purple-foreground: rgba(255, 255, 255, 1);
+  /* The default border color for elements such as inputs, buttons, and other containers. */
+  --border: rgba(228, 228, 231, 1);
+  /* The default background color for input fields once the text has been filled. Should be either transparent or match the input-background. */
+  --input: rgba(255, 255, 255, 1);
+  /* The default background color for input fields, text areas, and other input elements. */
+  --input-background: rgba(255, 255, 255, 1);
+  /* The default font weight for semi bold text. */
+  --font-weight-semi-bold: 600;
+  /* The default font weight for medium text. */
+  --font-weight-medium: 500;
+  /* The default font weight for normal text. */
+  --font-weight-normal: 400;
+  /* The color for focus rings, outlines, and other focus indicators. */
+  --ring: rgba(24, 24, 27, 1);
+  /* Loader subtext color for processing states */
+  --loader-subtext: rgba(113, 113, 122, 1);
+  /* Hover state background colors with proper contrast ratios */
+  --primary-hover: rgba(63, 63, 70, 1);
+  --primary-hover-bg: rgba(244, 244, 245, 1);
+  --accent-hover: rgba(63, 63, 70, 1);
+  --accent-hover-bg: rgba(244, 244, 245, 1);
+  --destructive-hover: rgba(220, 38, 38, 1);
+  --destructive-hover-bg: rgba(254, 226, 226, 1);
+  --border-hover: rgba(212, 212, 216, 1);
+  /* Selected state colors for form configurator */
+  --selected-bg: rgba(244, 244, 245, 1);
+  --selected-border: rgba(24, 24, 27, 1);
+  /* Shadow for small elevations - minimal Figma-like */
+  --elevation-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  /* Shadow for medium elevations - subtle */
+  --elevation-md: 0px 2px 4px 0px rgba(0, 0, 0, 0.06), 0px 4px 6px 0px rgba(0, 0, 0, 0.04);
+  /* Shadow for large elevations */
+  --elevation-lg: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  /* Transition duration for animations - snappy like Figma */
+  --transition-fast: 100ms;
+  --transition-normal: 150ms;
+  --transition-slow: 200ms;
+  /* The color for chart elements, such as a bar or line in a chart. */
+  --chart-1: rgba(24, 24, 27, 1);
+  /* The color for another chart element, such as a bar or line in a chart. */
+  --chart-2: rgba(113, 113, 122, 1);
+  /* The color for another chart element, such as a bar or line in a chart. */
+  --chart-3: rgba(139, 92, 246, 1);
+  /* The color for another chart element, such as a bar or line in a chart. */
+  --chart-4: rgba(34, 197, 94, 1);
+  /* The color for another chart element, such as a bar or line in a chart. */
+  --chart-5: rgba(251, 146, 60, 1);
+  /* The default border radius - Figma-like minimal corners */
+  --radius: 4px;
+  /* The border radius for button elements. */
+  --radius-button: 6px;
+  /* The border radius for card elements. */
+  --radius-card: 8px;
+  /* The border radius for input elements. */
+  --radius-input: 6px;
+  /* The border radius for pill-shaped elements. */
+  --radius-pill: 999px;
+  /* The background color for sidebars, navigation menus, and other persistent elements. */
+  --sidebar: rgba(250, 250, 250, 1);
+  /* The default color for text or elements that appear on top of sidebars, navigation menus, and other persistent elements. */
+  --sidebar-foreground: rgba(0, 0, 0, 1);
+  /* The primary color used for buttons, links, and other interactive elements in sidebars and navigation menus. */
+  --sidebar-primary: rgba(24, 24, 27, 1);
+  /* The default color for text or elements that appear on top of primary colored elements in sidebars and navigation menus. */
+  --sidebar-primary-foreground: rgba(255, 255, 255, 1);
+  /* The accent color used for highlights, links, and other interactive elements in sidebars and navigation menus. */
+  --sidebar-accent: rgba(244, 244, 245, 1);
+  /* The default color for text or elements that appear on top of accent colored elements in sidebars and navigation menus. */
+  --sidebar-accent-foreground: rgba(24, 24, 27, 1);
+  /* The default border color for elements in sidebars and navigation menus. */
+  --sidebar-border: rgba(228, 228, 231, 1);
+  /* The default color for focus rings, outlines, and other focus indicators in sidebars and navigation menus. */
+  --sidebar-ring: rgba(24, 24, 27, 1);
+  /* The background color for page containers and outer wrappers. */
+  --container-bg: rgba(255, 255, 255, 1);
+  /* Icon Variables - Figma-like thin strokes */
+  --icon-stroke: rgba(0, 0, 0, 1);
+  --icon-stroke-width: 1.5;
+  --icon-stroke-width-thin: 1;
+  --icon-stroke-width-thick: 2;
+}
+
+.dark {
+  /* Darker background for better contrast - WCAG AA compliant */
+  --background: rgba(12, 17, 29, 1);
+  /* Brighter foreground for better readability - contrast ratio 15:1 */
+  --foreground: rgba(250, 251, 252, 1);
+  /* Card background with better separation from main background */
+  --card: rgba(23, 30, 45, 1);
+  /* Card text with high contrast */
+  --card-foreground: rgba(250, 251, 252, 1);
+  /* Popover with distinct background */
+  --popover: rgba(23, 30, 45, 1);
+  --popover-foreground: rgba(250, 251, 252, 1);
+  /* Brighter primary for dark mode - better visibility and contrast ratio 4.5:1+ */
+  --primary: rgba(59, 130, 246, 1);
+  /* Dark text on bright primary for contrast */
+  --primary-foreground: rgba(255, 255, 255, 1);
+  /* Secondary with better contrast against background */
+  --secondary: rgba(45, 58, 82, 1);
+  --secondary-foreground: rgba(250, 251, 252, 1);
+  /* Muted with improved visibility */
+  --muted: rgba(45, 58, 82, 1);
+  /* Muted text with WCAG AA contrast ratio (4.5:1+) */
+  --muted-foreground: rgba(168, 182, 206, 1);
+  /* Brighter accent for better visibility */
+  --accent: rgba(56, 189, 248, 1);
+  --accent-foreground: rgba(255, 255, 255, 1);
+  /* Destructive with sufficient contrast */
+  --destructive: rgba(248, 113, 113, 1);
+  --destructive-foreground: rgba(255, 255, 255, 1);
+  /* Success with high visibility */
+  --success: rgba(74, 222, 128, 1);
+  --success-foreground: rgba(12, 17, 29, 1);
+  /* Warning with good contrast */
+  --warning: rgba(251, 191, 36, 1);
+  --warning-foreground: rgba(12, 17, 29, 1);
+  /* Purple with better visibility */
+  --purple: rgba(192, 132, 252, 1);
+  --purple-foreground: rgba(12, 17, 29, 1);
+  /* Brighter borders for better visibility - contrast ratio 3:1+ */
+  --border: rgba(66, 82, 110, 1);
+  /* Input backgrounds with clear distinction */
+  --input: rgba(23, 30, 45, 1);
+  --input-background: rgba(23, 30, 45, 1);
+  /* Bright ring for focus states */
+  --ring: rgba(96, 165, 250, 1);
+  /* Loader subtext color for processing states in dark mode */
+  --loader-subtext: rgba(139, 212, 76, 1);
+  /* Hover state colors for dark mode with proper contrast */
+  --primary-hover: rgba(96, 165, 250, 1);
+  --primary-hover-bg: rgba(30, 41, 59, 1);
+  --accent-hover: rgba(125, 211, 252, 1);
+  --accent-hover-bg: rgba(30, 41, 59, 1);
+  --destructive-hover: rgba(252, 165, 165, 1);
+  --destructive-hover-bg: rgba(30, 27, 32, 1);
+  --border-hover: rgba(148, 163, 184, 1);
+  /* Selected state colors for form configurator - dark mode */
+  --selected-bg: rgba(30, 58, 95, 1);
+  --selected-border: rgba(96, 165, 250, 1);
+  --font-weight-semi-bold: 600;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  /* Chart colors optimized for dark mode visibility */
+  --chart-1: rgba(59, 130, 246, 1);
+  --chart-2: rgba(56, 189, 248, 1);
+  --chart-3: rgba(192, 132, 252, 1);
+  --chart-4: rgba(74, 222, 128, 1);
+  --chart-5: rgba(251, 191, 36, 1);
+  /* Enhanced shadows for dark mode */
+  --elevation-sm: 0px 0px 1px 0px rgba(0, 0, 0, 0.6), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  --elevation-md: 0px 2px 8px 0px rgba(0, 0, 0, 0.5), 0px 8px 16px 0px rgba(0, 0, 0, 0.6);
+  --elevation-lg: 0px 8px 24px 0px rgba(0, 0, 0, 0.6), 0px 16px 32px 0px rgba(0, 0, 0, 0.7);
+  /* Sidebar with improved contrast */
+  --sidebar: rgba(23, 30, 45, 1);
+  --sidebar-foreground: rgba(250, 251, 252, 1);
+  --sidebar-primary: rgba(59, 130, 246, 1);
+  --sidebar-primary-foreground: rgba(255, 255, 255, 1);
+  --sidebar-accent: rgba(56, 189, 248, 1);
+  --sidebar-accent-foreground: rgba(255, 255, 255, 1);
+  --sidebar-border: rgba(66, 82, 110, 1);
+  --sidebar-ring: rgba(96, 165, 250, 1);
+  /* The background color for page containers and outer wrappers in dark mode. */
+  --container-bg: rgba(23, 30, 45, 1);
+  /* Icon Variables for dark mode */
+  --icon-stroke: rgba(250, 251, 252, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-purple: var(--purple);
+  --color-purple-foreground: var(--purple-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --color-loader-subtext: var(--loader-subtext);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-button: var(--radius-button);
+  --radius-card: var(--radius-card);
+  --radius-input: var(--radius-input);
+  --radius-pill: var(--radius-pill);
+  --box-shadow-sm: var(--elevation-sm);
+  --box-shadow-md: var(--elevation-md);
+  --box-shadow-lg: var(--elevation-lg);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-hover-bg: var(--primary-hover-bg);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-hover-bg: var(--accent-hover-bg);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-hover-bg: var(--destructive-hover-bg);
+  --color-border-hover: var(--border-hover);
+  --color-selected-bg: var(--selected-bg);
+  --color-selected-border: var(--selected-border);
+  --color-container-bg: var(--container-bg);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Ensure text selection works everywhere */
+  * {
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+  }
+
+  /* Specifically ensure input and textarea elements allow text selection */
+  input,
+  textarea,
+  [contenteditable="true"],
+  [contenteditable] {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+  }
+
+  /* Prevent selection on buttons and interactive elements only */
+  button:not(input):not(textarea),
+  [role="button"]:not(input):not(textarea),
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Fix date input calendar icon contrast in dark mode */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator,
+  .dark input[type="time"]::-webkit-calendar-picker-indicator,
+  .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2);
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  /* FORCE white calendar icon in dark mode with custom class */
+  .dark .date-input-white-icon::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100) !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+    background-color: transparent !important;
+  }
+
+  /* Firefox date input icons */
+  .dark input[type="date"],
+  .dark input[type="time"],
+  .dark input[type="datetime-local"] {
+    color-scheme: dark;
+  }
+
+  /* Ensure light mode icons remain unchanged */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  /* Make date input text uppercase */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    text-transform: uppercase;
+  }
+
+  /* Make date input placeholders uppercase */
+  input[type="date"]::placeholder,
+  input[type="time"]::placeholder,
+  input[type="datetime-local"]::placeholder {
+    text-transform: uppercase;
+  }
+
+  /* For webkit browsers - make date input internal text uppercase */
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit {
+    text-transform: uppercase;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+    text-transform: uppercase;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-h1-mobile);
+      font-weight: var(--font-weight-semi-bold);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-h2-mobile);
+      font-weight: var(--font-weight-medium);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-h3-mobile);
+      font-weight: var(--font-weight-medium);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-h4-mobile);
+      font-weight: var(--font-weight-medium);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base-mobile);
+      font-weight: var(--font-weight-normal);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-label-mobile);
+      font-weight: var(--font-weight-semi-bold);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base-mobile);
+      font-weight: var(--font-weight-medium);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base-mobile);
+      font-weight: var(--font-weight-normal);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+    
+    span {
+      font-size: var(--text-base-mobile);
+      font-weight: var(--font-weight-normal);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+    
+    /* Responsive typography for tablets and up */
+    @media (min-width: 640px) {
+      h1 {
+        font-size: var(--text-h1);
+      }
+
+      h2 {
+        font-size: var(--text-h2);
+      }
+
+      h3 {
+        font-size: var(--text-h3);
+      }
+
+      h4 {
+        font-size: var(--text-h4);
+      }
+
+      p {
+        font-size: var(--text-base);
+      }
+
+      label {
+        font-size: var(--text-label);
+      }
+
+      button {
+        font-size: var(--text-base);
+      }
+
+      input {
+        font-size: var(--text-base);
+      }
+      
+      span {
+        font-size: var(--text-base);
+      }
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Rich Text Editor Styles */
+.rich-text-editor-wrapper {
+  position: relative;
+  background-color: var(--input-background);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-input) var(--radius-input);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.rich-text-editor-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.rich-text-editor-content {
+  min-height: 400px;
+  padding: 12px 16px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-base);
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.rich-text-editor-content .ProseMirror {
+  min-height: 376px;
+  outline: none;
+}
+
+.rich-text-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  height: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.rich-text-editor-content h2 {
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-semi-bold);
+  font-family: 'Inter', sans-serif;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+  line-height: 1.3;
+}
+
+.rich-text-editor-content h2:first-child {
+  margin-top: 0;
+}
+
+.rich-text-editor-content h3 {
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  font-family: 'Inter', sans-serif;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+  line-height: 1.3;
+}
+
+.rich-text-editor-content h3:first-child {
+  margin-top: 0;
+}
+
+.rich-text-editor-content p {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.75em;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.rich-text-editor-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-editor-content strong {
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--foreground);
+}
+
+.rich-text-editor-content em {
+  font-style: italic;
+}
+
+.rich-text-editor-content s {
+  text-decoration: line-through;
+}
+
+.rich-text-editor-content code {
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.rich-text-editor-content ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-bottom: 0.75em;
+  color: var(--foreground);
+}
+
+.rich-text-editor-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-bottom: 0.75em;
+  color: var(--foreground);
+}
+
+.rich-text-editor-content li {
+  font-size: var(--text-base);
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.25em;
+  line-height: 1.5;
+}
+
+.rich-text-editor-content li p {
+  margin-bottom: 0.25em;
+}
+
+.rich-text-editor-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0.75em;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+
+.rich-text-editor-content blockquote p {
+  color: var(--muted-foreground);
+}
+
+.rich-text-editor-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+.rich-text-editor-content pre {
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 1em;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin-bottom: 0.75em;
+}
+
+.rich-text-editor-content pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
