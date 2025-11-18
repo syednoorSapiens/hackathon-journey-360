@@ -1,9 +1,30 @@
 // JSON Schema Types for AI 360 System
 
-export type FieldType = 'text' | 'email' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox' | 'radio' | 'file' | 'phone' | 'url';
+export type FieldType =
+  | "text"
+  | "email"
+  | "number"
+  | "date"
+  | "select"
+  | "textarea"
+  | "checkbox"
+  | "radio"
+  | "file"
+  | "phone"
+  | "url"
+  | "tel";
 
 export interface ValidationRule {
-  type: 'required' | 'minLength' | 'maxLength' | 'min' | 'max' | 'pattern' | 'email' | 'url' | 'custom';
+  type:
+    | "required"
+    | "minLength"
+    | "maxLength"
+    | "min"
+    | "max"
+    | "pattern"
+    | "email"
+    | "url"
+    | "custom";
   value?: string | number;
   message: string;
 }
@@ -38,7 +59,7 @@ export interface FormSchema {
   submitUrl?: string;
   successMessage?: string;
   errorMessage?: string;
-  layout?: 'simple' | 'two-column' | 'carded';
+  layout?: "simple" | "two-column" | "carded";
   metadata?: {
     createdAt: string;
     userStory: string;
@@ -46,7 +67,7 @@ export interface FormSchema {
 }
 
 export interface MockApiEndpoint {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: "GET" | "POST" | "PUT" | "DELETE";
   path: string;
   responseBody: any;
   statusCode: number;
@@ -56,15 +77,15 @@ export interface MockApiEndpoint {
 export interface TestCase {
   id: string;
   description: string;
-  type: 'unit' | 'integration' | 'validation';
+  type: "unit" | "integration" | "validation";
   code: string;
   fieldId?: string;
 }
 
 export interface DeploymentConfig {
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
   url?: string;
-  status: 'draft' | 'building' | 'deployed' | 'failed';
+  status: "draft" | "building" | "deployed" | "failed";
   timestamp?: string;
 }
 
@@ -76,5 +97,5 @@ export interface AI360State {
   mockApi: MockApiEndpoint[];
   tests: TestCase[];
   deployment: DeploymentConfig;
-  activeLayer: 'input' | 'schema' | 'form' | 'tests' | 'deployment';
+  activeLayer: "input" | "schema" | "form" | "tests" | "deployment";
 }

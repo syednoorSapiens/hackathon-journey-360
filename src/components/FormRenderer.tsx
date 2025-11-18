@@ -566,6 +566,7 @@ export function FormRenderer({
       case "text":
       case "email":
       case "phone":
+      case "tel":
       case "url":
         return renderFieldWrapper(
           field,
