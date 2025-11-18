@@ -690,7 +690,7 @@ export function FormRenderer({
         </Card>
       ));
     }
-    return fields.map((field) => renderField(field));
+    return fields.map((field, index) => index !== 0 && renderField(field));
   };
 
   const renderWizardStepper = () => {
@@ -816,7 +816,7 @@ export function FormRenderer({
 
   return (
     <div className='space-y-6' style={getThemeStyle()}>
-      <div className='flex items-center gap-4'>
+      {/* <div className='flex items-center gap-4'>
         <div
           className='h-12 w-12 rounded-[var(--radius-card)] bg-primary flex items-center justify-center'
           style={themeColors ? { backgroundColor: themeColors[0] } : {}}
@@ -827,7 +827,7 @@ export function FormRenderer({
           <h2 className='text-foreground'>Dynamic Form Renderer</h2>
           <p className='text-muted-foreground'>Live preview with validations</p>
         </div>
-      </div>
+      </div> */}
 
       <Card
         className={`bg-card border border-border rounded-[var(--radius-card)] ${
@@ -840,8 +840,8 @@ export function FormRenderer({
         style={{ boxShadow: "var(--elevation-md)" }}
       >
         <form onSubmit={handleSubmit(onSubmit)} className={getSpacingClass()}>
-          <div className='space-y-3 pb-6 border-b border-border'>
-            <h3 className='text-foreground'>{schema.title}</h3>
+          <div className='space-y-3 pb-6 border-b border-border text-center'>
+            <h3 className='text-foreground font-bold'>{schema.title}</h3>
             {schema.description && (
               <p className='text-muted-foreground'>{schema.description}</p>
             )}
