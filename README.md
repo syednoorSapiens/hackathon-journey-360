@@ -28,7 +28,7 @@ Journey 360 is an intelligent form builder that allows users to create complex f
 
 The application leverages AI to automatically generate form schemas, validation rules, test cases, and mock APIs.
 
-**Original Design**: [Figma - Journey 360 Phase 2](https://www.figma.com/design/St2OBO6r5Hnyiiy6qhqvTF/Journey-360--Phase-2-)
+**Original Design**: [Figma Prototype](https://dent-solid-09600871.figma.site)
 
 ## 🛠️ Tech Stack
 
