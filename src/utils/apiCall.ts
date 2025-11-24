@@ -10,7 +10,6 @@ export async function callSmartSchemaAPI(
       userContext: userStory,
       schema: schema,
     });
-    console.log("Smart Schema API response:", response.data);
     return response.data.schema;
   } catch (error) {
     console.error("Error calling Smart Schema API:", error);

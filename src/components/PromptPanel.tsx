@@ -4,6 +4,9 @@ import { Textarea } from "./ui/textarea";
 import { ScrollArea } from "./ui/scroll-area";
 import { Sparkles, Send, Paperclip, X, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
+import { callSmartSchemaAPI } from "../utils/apiCall";
+import { FormSchema } from "../types/schema";
+import { useAudioStreaming } from "../hooks/useAudioStreaming";
 
 interface Message {
   role: "user" | "assistant";
@@ -14,11 +17,15 @@ interface Message {
 interface PromptPanelProps {
   initialPrompt: string;
   onPromptSubmit: (prompt: string, attachments?: File[]) => void;
+  existingSchemas?: FormSchema; // JSON schema received from smart schema API
+  onSchemaUpdate?: (updatedSchema: FormSchema) => void; // Callback to update schema in parent
 }
 
 export function PromptPanel({
   initialPrompt,
   onPromptSubmit,
+  existingSchemas,
+  onSchemaUpdate,
 }: PromptPanelProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -59,9 +66,29 @@ The form will be fully functional with all configurations applied. You can refin
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize audio streaming hook for voice input
+  const {
+    isRecording,
+    interimTranscript,
+    finalTranscript,
+    startRecording,
+    stopRecording,
+    resetTranscript,
+  } = useAudioStreaming({
+    onTranscriptUpdate: (text, isFinal) => {
+      if (isFinal) {
+        // Append final transcript to current prompt
+        setCurrentPrompt((prev) => (prev ? `${prev} ${text}` : text));
+      }
+    },
+    onError: (error) => {
+      console.error("Audio streaming error:", error);
+      toast.error(error.message);
+    },
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,7 +98,7 @@ The form will be fully functional with all configurations applied. You can refin
     scrollToBottom();
   }, [messages]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!currentPrompt.trim() && attachments.length === 0) {
       toast.error("Please enter a prompt or attach a file");
       return;
@@ -87,22 +114,44 @@ The form will be fully functional with all configurations applied. You can refin
     setMessages((prev) => [...prev, userMessage]);
     setIsProcessing(true);
 
-    // Call the parent callback
-    onPromptSubmit(currentPrompt.trim(), attachments);
+    const promptText = currentPrompt.trim();
+    setCurrentPrompt("");
+    setAttachments([]);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call smart schema API with current prompt and existing schema
+      toast.info("Updating form schema...");
+
+      // Pass data in the required structure
+      const updatedSchema = await callSmartSchemaAPI(
+        promptText,
+        existingSchemas
+      );
+
+      // Update schema in parent component - this will only refresh the preview
+      if (onSchemaUpdate) {
+        onSchemaUpdate(updatedSchema);
+      }
+
       const assistantMessage: Message = {
         role: "assistant",
         content: `I've updated the form based on your prompt. The changes have been applied to the canvas. You can continue refining by adding more prompts or switch to Manual mode for detailed configuration.`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
+      toast.success("Form schema updated successfully!");
+    } catch (error) {
+      console.error("Error updating schema:", error);
+      const errorMessage: Message = {
+        role: "assistant",
+        content: `Sorry, I encountered an error while updating the form. Please try again or check if the API server is running.`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+      toast.error("Failed to update schema. Please try again.");
+    } finally {
       setIsProcessing(false);
-    }, 1500);
-
-    setCurrentPrompt("");
-    setAttachments([]);
+    }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,11 +166,20 @@ The form will be fully functional with all configurations applied. You can refin
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleMicrophoneToggle = () => {
-    // Placeholder for microphone functionality
-    setIsListening(!isListening);
-    toast.info(isListening ? "Listening..." : "Stopped listening");
+  const handleMicrophoneToggle = async () => {
+    if (isRecording) {
+      await stopRecording();
+    } else {
+      await startRecording();
+    }
   };
+
+  // Log existing schemas for debugging
+  React.useEffect(() => {
+    if (existingSchemas) {
+      console.log("Existing schema from smart schema API:", existingSchemas);
+    }
+  }, [existingSchemas]);
 
   return (
     <div className='flex-1 h-full flex flex-col bg-background overflow-hidden'>
@@ -354,7 +412,9 @@ The form will be fully functional with all configurations applied. You can refin
 
           {/* Textarea */}
           <Textarea
-            value={currentPrompt}
+            value={
+              currentPrompt + (interimTranscript ? ` ${interimTranscript}` : "")
+            }
             onChange={(e) => setCurrentPrompt(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -362,10 +422,11 @@ The form will be fully functional with all configurations applied. You can refin
                 handleSubmit();
               }
             }}
-            placeholder='Type here...'
+            placeholder={isRecording ? "Listening..." : "Type here..."}
             className='flex-1 min-h-[28px] max-h-[100px] resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0'
             style={{ fontSize: "13px", lineHeight: "1.4" }}
             rows={1}
+            disabled={isRecording}
           />
 
           {/* Microphone Button */}
@@ -374,13 +435,13 @@ The form will be fully functional with all configurations applied. You can refin
             size='sm'
             variant='ghost'
             className={`h-7 w-7 p-0 rounded-[var(--radius-button)] shrink-0 transition-colors ${
-              isListening
-                ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+              isRecording
+                ? "bg-destructive/10 text-destructive hover:bg-destructive/20 animate-pulse"
                 : "hover:bg-secondary"
             }`}
-            title={isListening ? "Stop listening" : "Voice input"}
+            title={isRecording ? "Stop listening" : "Voice input"}
           >
-            {isListening ? (
+            {isRecording ? (
               <MicOff className='h-3.5 w-3.5 shrink-0' />
             ) : (
               <Mic className='h-3.5 w-3.5 shrink-0 text-muted-foreground' />
