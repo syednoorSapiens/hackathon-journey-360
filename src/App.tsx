@@ -157,7 +157,7 @@ export default function App() {
         mockApi,
         isProcessing: false,
       }));
-    }, 4000);
+    }, 1000);
 
     // Simulate AI processing
     // setTimeout(() => {

@@ -21,6 +21,7 @@ An AI-powered form builder that transforms natural language requirements into fu
 ## 🎯 Overview
 
 Journey 360 is an intelligent form builder that allows users to create complex forms through:
+
 - **Natural Language Input**: Describe your form requirements in plain text
 - **Voice Input**: Use speech-to-text powered by Azure Whisper API
 - **File Upload**: Upload existing form descriptions or schemas
@@ -33,9 +34,10 @@ The application leverages AI to automatically generate form schemas, validation 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: React 18.3.1 with TypeScript
 - **Build Tool**: Vite 6.3.5
-- **Styling**: 
+- **Styling**:
   - Tailwind CSS
   - Radix UI Components (Accessible, Unstyled Components)
   - Custom UI Components Library
@@ -49,12 +51,14 @@ The application leverages AI to automatically generate form schemas, validation 
 - **HTTP Client**: Axios
 
 ### Backend Integration
+
 - **Speech-to-Text**: Azure OpenAI Whisper API
 - **AI Processing**: Azure OpenAI (GPT-4/GPT-3.5)
 - **Backend API**: Express.js server (Journey 360 Backend)
 - **File Handling**: Multer (for audio uploads)
 
 ### Development Tools
+
 - **Package Manager**: pnpm
 - **TypeScript**: Full type safety
 - **Build Optimization**: SWC (Speedy Web Compiler)
@@ -62,6 +66,7 @@ The application leverages AI to automatically generate form schemas, validation 
 ## ✨ Features
 
 ### Core Features
+
 - 🎤 **Voice-to-Form**: Speak your requirements and generate forms instantly
 - 📝 **Text-to-Form**: Type natural language descriptions
 - 📤 **Upload-to-Form**: Upload existing form files
@@ -74,6 +79,7 @@ The application leverages AI to automatically generate form schemas, validation 
 - 💾 **Export Options**: Export forms, schemas, and tests
 
 ### Advanced Features
+
 - Multi-step form support (Linear, Branching, Progressive)
 - Conditional field rendering
 - Complex validation rules
@@ -153,7 +159,7 @@ App.tsx
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 - Journey 360 Backend server running
 - Azure OpenAI API credentials
@@ -161,12 +167,14 @@ App.tsx
 ### Frontend Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd hackathon-journey-360
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    # or
@@ -174,14 +182,16 @@ App.tsx
    ```
 
 3. **Configure environment variables**
-   
+
    Create a `.env.local` file in the project root:
+
    ```bash
    # Backend API Configuration
-   VITE_BACKEND_URL=http://localhost:3002
+   VITE_BACKEND_URL=https://eua-it-hackathon.sapiens.com
    ```
 
 4. **Start the development server**
+
    ```bash
    pnpm dev
    # or
@@ -193,18 +203,20 @@ App.tsx
 ### Backend Setup
 
 1. **Navigate to your backend project**
+
    ```bash
    cd journey-360-backend
    ```
 
 2. **Create backend `.env` file**
+
    ```bash
    # Azure OpenAI Configuration
    AZURE_WHISPER_API_KEY=your-whisper-api-key
    AZURE_WHISPER_ENDPOINT=your-whisper-endpoint
    AZURE_OPENAI_API_KEY=your-openai-api-key
    AZURE_OPENAI_ENDPOINT=your-openai-endpoint
-   
+
    # Server Configuration
    PORT=3002
    NODE_ENV=development
@@ -212,6 +224,7 @@ App.tsx
    ```
 
 3. **Install backend dependencies**
+
    ```bash
    npm install express multer dotenv cors axios
    npm install --save-dev @types/express @types/multer @types/cors
@@ -266,11 +279,12 @@ const whisperService = createWhisperService();
 await whisperService.startRecording();
 const audioBlob = await whisperService.stopRecording();
 const result = await whisperService.transcribe(audioBlob, {
-  language: 'en'
+  language: "en",
 });
 ```
 
 **Backend handles**:
+
 - Audio file validation
 - Azure Whisper API calls
 - Error handling and retry logic
@@ -334,48 +348,60 @@ hackathon-journey-360/
 ## 🎯 Key Design Decisions
 
 ### 1. **Backend-First Speech Processing**
+
 **Decision**: Process speech-to-text on backend rather than client-side
-**Rationale**: 
+**Rationale**:
+
 - Keeps API keys secure
 - Enables server-side caching and optimization
 - Better error handling and monitoring
 - Easier rate limiting
 
 ### 2. **Radix UI for Components**
+
 **Decision**: Use Radix UI primitives for complex components
 **Rationale**:
+
 - Accessibility out-of-the-box
 - Unstyled, allowing full design control
 - Comprehensive component set
 - Battle-tested and maintained
 
 ### 3. **Vite over Create React App**
+
 **Decision**: Use Vite as build tool
 **Rationale**:
+
 - Lightning-fast HMR (Hot Module Replacement)
 - Better TypeScript support
 - Smaller bundle sizes
 - Modern tooling ecosystem
 
 ### 4. **React Hook Form**
+
 **Decision**: Use React Hook Form for form state management
 **Rationale**:
+
 - Minimal re-renders
 - Easy validation integration
 - TypeScript support
 - Better performance than alternatives
 
 ### 5. **Modular Service Architecture**
+
 **Decision**: Separate concerns into service classes (WhisperService, AIParser, etc.)
 **Rationale**:
+
 - Better testability
 - Reusability across components
 - Easier maintenance
 - Clear separation of concerns
 
 ### 6. **TypeScript Throughout**
+
 **Decision**: Full TypeScript implementation
 **Rationale**:
+
 - Type safety reduces bugs
 - Better IDE support
 - Self-documenting code
@@ -386,27 +412,32 @@ hackathon-journey-360/
 ### Current Limitations
 
 1. **Audio Format Support**
+
    - Limited to browser-supported formats (WebM, MP4, OGG)
    - 25MB file size limit
    - Requires modern browser with MediaRecorder API
 
 2. **AI Processing**
+
    - Response quality depends on input clarity
    - May require refinement for complex forms
    - Token limits on large schemas
    - Rate limiting from Azure OpenAI
 
 3. **Browser Compatibility**
+
    - Microphone access requires HTTPS (except localhost)
    - Some features require modern browsers (Chrome 90+, Firefox 88+, Safari 14+)
    - No IE11 support
 
 4. **Backend Dependency**
+
    - Requires backend server running for speech-to-text
    - No offline mode
    - Network latency affects user experience
 
 5. **Form Complexity**
+
    - Very complex forms may need manual refinement
    - Limited to supported field types
    - Conditional logic may require manual configuration
@@ -447,6 +478,7 @@ hackathon-journey-360/
 ## 🧪 Testing
 
 ### Running Tests
+
 ```bash
 # Unit tests
 npm run test
@@ -459,6 +491,7 @@ npm run test:e2e
 ```
 
 ### Test Coverage
+
 - Unit tests for utility functions
 - Integration tests for API calls
 - Component tests for React components
@@ -467,6 +500,7 @@ npm run test:e2e
 ## 🚢 Deployment
 
 ### Build for Production
+
 ```bash
 npm run build
 ```
@@ -474,11 +508,13 @@ npm run build
 Output will be in `dist/` directory.
 
 ### Environment Variables (Production)
+
 ```bash
 VITE_BACKEND_URL=https://api.yourdomain.com
 ```
 
 ### Hosting Options
+
 - **Vercel**: Recommended for Vite projects
 - **Netlify**: Easy deployment with CI/CD
 - **AWS S3 + CloudFront**: For enterprise deployments
@@ -507,9 +543,6 @@ This project is proprietary software. All rights reserved.
 
 Developed for the Hackathon Journey 360 (Phase 2)
 
-
-
 ---
 
 **Made with ❤️ for Hackathon Journey 360**
-  

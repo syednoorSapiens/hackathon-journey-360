@@ -6,13 +6,10 @@ export async function callSmartSchemaAPI(
   schema?: FormSchema
 ): Promise<FormSchema> {
   try {
-    const response = await axios.post(
-      "http://localhost:3002/api/smart-schema",
-      {
-        userContext: userStory,
-        schema: schema,
-      }
-    );
+    const response = await axios.post("/api/smart-schema", {
+      userContext: userStory,
+      schema: schema,
+    });
     console.log("Smart Schema API response:", response.data);
     return response.data.schema;
   } catch (error) {

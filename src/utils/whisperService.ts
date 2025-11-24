@@ -126,16 +126,20 @@ export class WhisperService {
         formData.append("temperature", options.temperature.toString());
       }
 
-      const response = await fetch(`${this.config.backendUrl}/api/audio/transcribe`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${this.config.backendUrl}/api/audio/transcribe`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error("Backend API error:", errorData);
         throw new Error(
-          errorData.error || `Transcription failed: ${response.status} ${response.statusText}`
+          errorData.error ||
+            `Transcription failed: ${response.status} ${response.statusText}`
         );
       }
 
@@ -160,7 +164,7 @@ export class WhisperService {
    */
   async translate(
     audioBlob: Blob,
-    options?: Omit<TranscriptionOptions, 'language'>
+    options?: Omit<TranscriptionOptions, "language">
   ): Promise<TranscriptionResult> {
     try {
       const formData = new FormData();
@@ -179,16 +183,20 @@ export class WhisperService {
         formData.append("temperature", options.temperature.toString());
       }
 
-      const response = await fetch(`${this.config.backendUrl}/api/audio/translate`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${this.config.backendUrl}/api/audio/translate`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error("Backend API error:", errorData);
         throw new Error(
-          errorData.error || `Translation failed: ${response.status} ${response.statusText}`
+          errorData.error ||
+            `Translation failed: ${response.status} ${response.statusText}`
         );
       }
 
@@ -271,7 +279,7 @@ export function createWhisperService(): WhisperService {
   const config: WhisperConfig = {
     backendUrl:
       import.meta.env.VITE_BACKEND_URL ||
-      "http://localhost:3002", // Default backend URL
+      "https://eua-it-hackathon.sapiens.com", // Default backend URL
   };
 
   return new WhisperService(config);

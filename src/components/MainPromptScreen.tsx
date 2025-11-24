@@ -19,7 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 import { toast } from "sonner";
-import { createWhisperService, WhisperService } from "../utils/whisperService";
+import { useAudioStreaming } from "../hooks/useAudioStreaming";
 
 interface MainPromptScreenProps {
   onContinue: (requirements: string) => void;
@@ -27,22 +27,41 @@ interface MainPromptScreenProps {
 
 export function MainPromptScreen({ onContinue }: MainPromptScreenProps) {
   const [requirements, setRequirements] = useState("");
-  const [isListening, setIsListening] = useState(false);
   const [attachments, setAttachments] = useState<
     Array<{ name: string; type: "image" | "document"; data: string }>
   >([]);
   const [darkMode, setDarkMode] = useState(false);
-  const recognitionRef = useRef<any>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const whisperServiceRef = useRef<WhisperService | null>(null);
 
+  // Audio streaming hook
+  const {
+    isRecording,
+    isProcessing,
+    interimTranscript,
+    finalTranscript,
+    startRecording,
+    stopRecording,
+    resetTranscript,
+  } = useAudioStreaming({
+    onTranscriptUpdate: (text, isFinal) => {
+      if (isFinal) {
+        setRequirements((prev) => (prev ? `${prev} ${text}` : text));
+      }
+    },
+    onError: (error) => {
+      console.error("Audio streaming error:", error);
+    },
+  });
+
+  // Sync interim transcript to display live transcription
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      whisperServiceRef.current = createWhisperService();
+    if (interimTranscript && textareaRef.current) {
+      // Auto-scroll to bottom when new text appears
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, []);
+  }, [interimTranscript]);
 
   // Initialize dark mode
   useEffect(() => {
@@ -85,65 +104,10 @@ export function MainPromptScreen({ onContinue }: MainPromptScreenProps) {
   ];
 
   const handleMicrophoneToggle = async () => {
-    // Check if Whisper service is available
-    if (!whisperServiceRef.current) {
-      toast.error("Speech service not initialized");
-      return;
-    }
-
-    if (!WhisperService.isSupported()) {
-      toast.error("Audio recording is not supported in this browser");
-      return;
-    }
-
-    // If currently listening, stop recording and transcribe
-    if (isListening) {
-      setIsListening(false);
-      toast.info("Processing audio...");
-
-      try {
-        const audioBlob = await whisperServiceRef.current.stopRecording();
-
-        // Check if audio has content
-        if (audioBlob.size < 1000) {
-          toast.error("No speech detected. Please try again.");
-          return;
-        }
-
-        const result = await whisperServiceRef.current.transcribe(audioBlob);
-
-        if (result.success && result.text) {
-          setRequirements((prev) => prev + (prev ? " " : "") + result.text);
-          toast.success("Speech transcribed successfully");
-        } else {
-          toast.error(result.error || "Failed to transcribe audio");
-        }
-      } catch (error) {
-        console.error("Error processing audio:", error);
-        toast.error("Failed to process audio. Please try again.");
-      }
-      return;
-    }
-
-    // Start recording
-    try {
-      await whisperServiceRef.current.startRecording();
-      setIsListening(true);
-      toast.success("Recording... Click again to stop", {
-        duration: 3000,
-        icon: "🎤",
-      });
-    } catch (error) {
-      console.error("Error starting recording:", error);
-      setIsListening(false);
-
-      if (error instanceof Error && error.message.includes("permission")) {
-        toast.error(
-          "Microphone access denied. Please enable microphone permissions in your browser settings."
-        );
-      } else {
-        toast.error("Failed to start recording. Please check your microphone.");
-      }
+    if (isRecording) {
+      await stopRecording();
+    } else {
+      await startRecording();
     }
   };
 
@@ -242,20 +206,44 @@ export function MainPromptScreen({ onContinue }: MainPromptScreenProps) {
             <div className='overflow-hidden border-0 bg-card rounded-[21px] flex flex-col'>
               {/* Input Section - With Padding */}
               <div className='px-6 pt-6 pb-4'>
-                {/* Textarea */}
-                <textarea
-                  ref={textareaRef}
-                  value={requirements}
-                  onChange={(e) => setRequirements(e.target.value)}
-                  placeholder="Describe your idea, and I'll bring it to life"
-                  className='w-full h-[250px] px-0 py-0 bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus:outline-none resize-none overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.metaKey) {
-                      e.preventDefault();
-                      handleContinue();
-                    }
-                  }}
-                />
+                {/* Textarea with Live Transcription */}
+                <div className='relative w-full h-[250px]'>
+                  <textarea
+                    ref={textareaRef}
+                    value={requirements}
+                    onChange={(e) => setRequirements(e.target.value)}
+                    placeholder="Describe your idea, and I'll bring it to life"
+                    className='w-full h-full px-0 py-0 bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus:outline-none resize-none overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.metaKey) {
+                        e.preventDefault();
+                        handleContinue();
+                      }
+                    }}
+                  />
+                  {/* Live interim transcript overlay */}
+                  {interimTranscript && (
+                    <div className='absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-accent/10 to-transparent pointer-events-none'>
+                      <div className='flex items-start gap-2'>
+                        <div className='flex gap-1 mt-1'>
+                          {[0, 1, 2].map((i) => (
+                            <div
+                              key={i}
+                              className='w-1.5 h-1.5 rounded-full bg-accent'
+                              style={{
+                                animation: "pulse 1.5s ease-in-out infinite",
+                                animationDelay: `${i * 0.2}s`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <span className='text-accent/90 italic text-sm animate-in fade-in'>
+                          {interimTranscript}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Footer Section - Full Width with Border Top */}
@@ -357,17 +345,25 @@ export function MainPromptScreen({ onContinue }: MainPromptScreenProps) {
                     <div className='flex items-center gap-2 flex-shrink-0'>
                       <button
                         onClick={handleMicrophoneToggle}
+                        disabled={isProcessing}
                         className={`h-9 w-9 rounded-[8px] transition-all flex items-center justify-center relative ${
-                          isListening
-                            ? "bg-destructive/20 text-destructive"
+                          isRecording
+                            ? "bg-accent/20 text-accent animate-pulse"
                             : "hover:bg-background/80 text-muted-foreground hover:text-foreground"
-                        }`}
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
                         title={
-                          isListening ? "Stop recording" : "Start voice input"
+                          isRecording
+                            ? "Stop recording"
+                            : isProcessing
+                            ? "Processing..."
+                            : "Start voice input"
                         }
                       >
-                        {isListening ? (
-                          <MicOff className='h-4 w-4' />
+                        {isRecording ? (
+                          <>
+                            <MicOff className='h-4 w-4' />
+                            <span className='absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full animate-ping' />
+                          </>
                         ) : (
                           <Mic className='h-4 w-4' />
                         )}
