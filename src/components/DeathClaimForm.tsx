@@ -52,6 +52,7 @@ interface DeathClaimFormProps {
   onFormDataChange?: (data: any) => void;
   wizardStep?: number;
   onWizardStepChange?: (step: number) => void;
+  hideHeader?: boolean;
 }
 
 interface DocumentUpload {
@@ -86,7 +87,8 @@ const DeathClaimFormComponent = ({
   themeColors,
   onFormDataChange,
   wizardStep: externalWizardStep,
-  onWizardStepChange: externalOnWizardStepChange
+  onWizardStepChange: externalOnWizardStepChange,
+  hideHeader = false
 }: DeathClaimFormProps) => {
   const [internalStep, setInternalStep] = useState(0);
   
@@ -1421,66 +1423,68 @@ const DeathClaimFormComponent = ({
           }}
         >
           {/* Header */}
-          <div 
-            className="border-b border-border relative overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, 
-                color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 8%, var(--background)) 0%,
-                var(--background) 50%,
-                color-mix(in srgb, ${themeColors?.[1] || 'var(--accent)'} 6%, var(--background)) 100%)`,
-              padding: getSpacingValue()
-            }}
-          >
-            {/* Decorative Background Patterns */}
-            <div className="absolute inset-0 pointer-events-none opacity-10">
-              {/* Grid Pattern */}
-              <div 
-                className="absolute inset-0" 
-                style={{
-                  backgroundImage: `linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)`,
-                  backgroundSize: '40px 40px'
-                }}
-              />
-              {/* Radial gradient overlay */}
-              <div 
-                className="absolute inset-0"
-                style={{
-                  background: `radial-gradient(circle at 30% 50%, color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 15%, transparent) 0%, transparent 60%)`
-                }}
-              />
-            </div>
-            
-            {/* Main Content */}
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 max-w-5xl mx-auto w-full">
-              {/* Icon */}
-              <div className="relative flex-shrink-0 w-24 h-24 flex items-center justify-center rounded-full bg-[rgba(241,245,249,0)]">
-                <Shield 
-                  className="w-12 h-12"
-                  style={{ color: themeColors?.[0] || 'var(--primary)' }}
+          {!hideHeader && (
+            <div 
+              className="border-b border-border relative overflow-hidden"
+              style={{
+                background: `linear-gradient(135deg, 
+                  color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 8%, var(--background)) 0%,
+                  var(--background) 50%,
+                  color-mix(in srgb, ${themeColors?.[1] || 'var(--accent)'} 6%, var(--background)) 100%)`,
+                padding: getSpacingValue()
+              }}
+            >
+              {/* Decorative Background Patterns */}
+              <div className="absolute inset-0 pointer-events-none opacity-10">
+                {/* Grid Pattern */}
+                <div 
+                  className="absolute inset-0" 
+                  style={{
+                    backgroundImage: `linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)`,
+                    backgroundSize: '40px 40px'
+                  }}
+                />
+                {/* Radial gradient overlay */}
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    background: `radial-gradient(circle at 30% 50%, color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 15%, transparent) 0%, transparent 60%)`
+                  }}
                 />
               </div>
               
-              {/* Text Content */}
-              <div className="text-center md:text-left flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
-                  style={{
-                    background: `color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 12%, var(--card))`,
-                    border: `1px solid color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 20%, var(--border))`
-                  }}
-                >
-                  <Sparkles className="w-3.5 h-3.5" style={{ color: themeColors?.[0] || 'var(--primary)' }} />
-                  <span style={{ color: themeColors?.[0] || 'var(--primary)', fontSize: '13px' }}>Claim</span>
+              {/* Main Content */}
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-center md:justify-start gap-6 max-w-5xl mx-auto w-full">
+                {/* Icon */}
+                <div className="relative flex-shrink-0 w-24 h-24 flex items-center justify-center rounded-full bg-[rgba(241,245,249,0)]">
+                  <Shield 
+                    className="w-12 h-12"
+                    style={{ color: themeColors?.[0] || 'var(--primary)' }}
+                  />
                 </div>
-                <h2 className="text-foreground mb-2" style={{ letterSpacing: '-0.02em' }}>
-                  Death Claim Submission
-                </h2>
-                <p className="text-muted-foreground" style={{ maxWidth: '500px' }}>
-                  We understand this is a difficult time. 
-                  <span style={{ color: themeColors?.[0] || 'var(--primary)', marginLeft: '4px' }}>Please provide the required information so we can assist with compassion.</span>
-                </p>
+                
+                {/* Text Content */}
+                <div className="text-center md:text-left flex-1">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
+                    style={{
+                      background: `color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 12%, var(--card))`,
+                      border: `1px solid color-mix(in srgb, ${themeColors?.[0] || 'var(--primary)'} 20%, var(--border))`
+                    }}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: themeColors?.[0] || 'var(--primary)' }} />
+                    <span style={{ color: themeColors?.[0] || 'var(--primary)', fontSize: '13px' }}>Claim</span>
+                  </div>
+                  <h2 className="text-foreground mb-2" style={{ letterSpacing: '-0.02em' }}>
+                    Death Claim Submission
+                  </h2>
+                  <p className="text-muted-foreground" style={{ maxWidth: '500px' }}>
+                    We understand this is a difficult time. 
+                    <span style={{ color: themeColors?.[0] || 'var(--primary)', marginLeft: '4px' }}>Please provide the required information so we can assist with compassion.</span>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Progress */}
           {showStepper && (

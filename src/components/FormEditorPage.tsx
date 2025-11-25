@@ -115,6 +115,7 @@ interface FormEditorPageProps {
   onDeploy?: () => void;
   onDownload?: () => void;
   onDownloadScreenshots?: () => void;
+  isEmbedded?: boolean;
 }
 
 export function FormEditorPage({
@@ -129,6 +130,7 @@ export function FormEditorPage({
   onDeploy: externalOnDeploy,
   onDownload: externalOnDownload,
   onDownloadScreenshots: externalOnDownloadScreenshots,
+  isEmbedded = false,
 }: FormEditorPageProps) {
   const [editableRequirements, setEditableRequirements] =
     useState(requirements);
@@ -818,8 +820,8 @@ export function FormEditorPage({
       <div className='absolute top-0 right-1/3 w-96 h-96 bg-gradient-to-br from-accent/10 to-primary/10 rounded-full blur-3xl pointer-events-none' />
       <div className='absolute bottom-0 left-1/3 w-96 h-96 bg-gradient-to-tr from-purple/10 to-accent/10 rounded-full blur-3xl pointer-events-none' />
 
-      {/* Left Panel - Prompt / Manual Tabs */}
-      {!isFullscreen && (
+      {/* Left Panel - Prompt / Manual Tabs (Hide when embedded) */}
+      {!isFullscreen && !isEmbedded && (
         <div
           className='relative border-r border-border bg-background flex flex-col overflow-hidden z-10'
           style={{
@@ -1537,25 +1539,27 @@ export function FormEditorPage({
             )}
           </div>
 
-          {/* Resize Handle */}
-          <div
-            onMouseDown={handleMouseDown}
-            className='absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/50 transition-colors z-30 group'
-            style={{
-              backgroundColor: isResizing
-                ? "rgb(var(--color-primary))"
-                : "transparent",
-            }}
-          >
+          {/* Resize Handle (Hide when embedded) */}
+          {!isEmbedded && (
             <div
-              className='absolute top-1/2 -translate-y-1/2 right-0 w-1 h-12 bg-border group-hover:bg-primary/50 rounded-full transition-colors'
+              onMouseDown={handleMouseDown}
+              className='absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/50 transition-colors z-30 group'
               style={{
                 backgroundColor: isResizing
                   ? "rgb(var(--color-primary))"
-                  : undefined,
+                  : "transparent",
               }}
-            />
-          </div>
+            >
+              <div
+                className='absolute top-1/2 -translate-y-1/2 right-0 w-1 h-12 bg-border group-hover:bg-primary/50 rounded-full transition-colors'
+                style={{
+                  backgroundColor: isResizing
+                    ? "rgb(var(--color-primary))"
+                    : undefined,
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -1566,14 +1570,15 @@ export function FormEditorPage({
             isFullscreen ? "fixed inset-0 z-[9999] bg-background" : "z-10"
           }`}
         >
-          {/* Canvas Toolbar */}
-          <div className='h-12 border-b-2 border-border bg-card/95 backdrop-blur-sm flex items-center justify-between px-6 flex-shrink-0 shadow-[var(--elevation-sm)]'>
-            <div className='flex items-center gap-2.5'>
-              <div className='h-6 w-6 rounded-[var(--radius-card)] bg-primary/10 flex items-center justify-center shadow-[var(--elevation-sm)]'>
-                <Monitor className='h-3.5 w-3.5 text-primary' />
+          {/* Canvas Toolbar (Hide when embedded) */}
+          {!isEmbedded && (
+            <div className='h-12 border-b-2 border-border bg-card/95 backdrop-blur-sm flex items-center justify-between px-6 flex-shrink-0 shadow-[var(--elevation-sm)]'>
+              <div className='flex items-center gap-2.5'>
+                <div className='h-6 w-6 rounded-[var(--radius-card)] bg-primary/10 flex items-center justify-center shadow-[var(--elevation-sm)]'>
+                  <Monitor className='h-3.5 w-3.5 text-primary' />
+                </div>
+                <h3 className='text-foreground'>Canvas</h3>
               </div>
-              <h3 className='text-foreground'>Canvas</h3>
-            </div>
             <div className='flex items-center gap-2'>
               {/* Play/Exit Fullscreen Button */}
               <button
@@ -1648,7 +1653,8 @@ export function FormEditorPage({
                 </Button>
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Canvas Area */}
           <div className='flex-1 overflow-y-auto'>
@@ -1737,8 +1743,8 @@ export function FormEditorPage({
         </div>
       )}
 
-      {/* Code Panel - Schema, APIs, Tests, Deploy (only show in code mode) */}
-      {mainView === "code" && (
+      {/* Code Panel - Schema, APIs, Tests, Deploy (only show in code mode and hide when embedded) */}
+      {mainView === "code" && !isEmbedded && (
         <div className='flex-1 bg-card flex flex-col z-10'>
           {/* The content will go here */}
           {true && (

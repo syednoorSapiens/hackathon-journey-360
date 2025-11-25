@@ -40,6 +40,7 @@ interface TravelInsuranceFormProps {
   template?: 'simple' | 'two-column' | 'carded';
   themeColors?: string[];
   onFormDataChange?: (data: any) => void;
+  hideHeader?: boolean;
 }
 
 interface TravellerInfo {
@@ -101,7 +102,8 @@ const TravelInsuranceFormComponent = ({
   inputSize = 'md',
   template = 'simple',
   themeColors,
-  onFormDataChange
+  onFormDataChange,
+  hideHeader = false
 }: TravelInsuranceFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -1497,17 +1499,19 @@ const TravelInsuranceFormComponent = ({
       }}
     >
       <div className="max-w-4xl mx-auto">
-        <header className="mb-6 sm:mb-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Shield className="h-6 w-6 text-primary" />
+        {!hideHeader && (
+          <header className="mb-6 sm:mb-8 text-center">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h1 className="text-foreground break-words px-2">Travel Insurance Quote & Buy</h1>
             </div>
-            <h1 className="text-foreground break-words px-2">Travel Insurance Quote & Buy</h1>
-          </div>
-          <p className="text-muted-foreground break-words px-2">
-            Complete your travel insurance purchase through our guided journey
-          </p>
-        </header>
+            <p className="text-muted-foreground break-words px-2">
+              Complete your travel insurance purchase through our guided journey
+            </p>
+          </header>
+        )}
 
         {renderStepper()}
 
